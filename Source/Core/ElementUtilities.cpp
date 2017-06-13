@@ -177,7 +177,6 @@ int ElementUtilities::GetLineHeight(Element* element)
         }    
     	case Property::NUMBER:
     	case Property::EM:
-    	case Property::REM:
     		// If the property is a straight number or an em measurement, then it scales the line height.
     		return Math::Round(line_height_property->value.Get< float >() * line_height);
     	case Property::PERCENT:
