@@ -45,7 +45,14 @@
 
 int main(int argc, char **argv)
 {
-	sf::RenderWindow MyWindow(sf::VideoMode(800, 600), "libRocket with SFML2", sf::Style::Close);
+#ifdef ROCKET_PLATFORM_WIN32
+        DoAllocConsole();
+#endif
+
+        int window_width = 1024;
+        int window_height = 768;
+
+	sf::RenderWindow MyWindow(sf::VideoMode(window_width, window_height), "libRocket with SFML2", sf::Style::Close);
 	MyWindow.setVerticalSyncEnabled(true);
 
 #ifdef ENABLE_GLEW
@@ -155,13 +162,16 @@ int main(int argc, char **argv)
 					SystemInterface.GetKeyModifiers(&MyWindow));
 				break;
 			case sf::Event::Closed:
-				return 1;
+				MyWindow.close();
 				break;
 			};
 		};
 
 		Context->Update();
 	};
+
+	Context->RemoveReference();
+	Rocket::Core::Shutdown();
 
 	return 0;
 };

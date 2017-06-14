@@ -34,13 +34,18 @@
 #undef ROCKETLUA_API
 #endif
 
-#if !defined STATIC_LIB
+#ifdef STATIC_LIB
+	#define ROCKET_STATIC_LIB
+	#pragma message("DEPRECATED: STATIC_LIB macro has been deprecated in favor of ROCKET_STATIC_LIB and support will be removed in a future release")
+#endif
+
+#if !defined ROCKET_STATIC_LIB
 	#ifdef ROCKET_PLATFORM_WIN32
-		#if defined RocketcoreLua_EXPORTS 
+		#if defined RocketCoreLua_EXPORTS 
 			#define ROCKETLUA_API __declspec(dllexport)
-        #elif defined RocketcontrolsLua_EXPORTS
-            #define ROCKETLUA_API __declspec(dllexport)
-        #else
+        	#elif defined RocketControlsLua_EXPORTS
+        	    #define ROCKETLUA_API __declspec(dllexport)
+        	#else
 			#define ROCKETLUA_API __declspec(dllimport)
 		#endif
 	#else

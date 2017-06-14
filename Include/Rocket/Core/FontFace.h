@@ -25,41 +25,55 @@
  *
  */
 
-#include "precompiled.h"
-#include "../../Include/Rocket/Core/Types.h"
+#ifndef ROCKETCOREFONTFACE_H
+#define ROCKETCOREFONTFACE_H
+
+#include "Font.h"
 
 namespace Rocket {
 namespace Core {
 
-Vector2i operator*(int lhs, const Vector2i& rhs)
+class FontFaceHandle;
+
+/**
+	@author Peter Curry
+ */
+
+class FontFace
 {
-	return Vector2i(lhs * rhs.x, lhs * rhs.y);
+public:
+    FontFace(Font::Style style, Font::Weight weight, bool release_stream);
+    virtual ~FontFace();
+
+	/// Returns the style of the font face.
+	/// @return The font face's style.
+	Font::Style GetStyle() const;
+	/// Returns the weight of the font face.
+	/// @return The font face's weight.
+	Font::Weight GetWeight() const;
+
+	/// Returns a handle for positioning and rendering this face at the given size.
+	/// @param[in] charset The set of characters in the handle, as a comma-separated list of unicode ranges.
+	/// @param[in] size The size of the desired handle, in points.
+	/// @return The shared font handle.
+    virtual FontFaceHandle* GetHandle(const String& charset, int size) = 0;
+
+	/// Releases the face's FreeType face structure. This will mean handles for new sizes cannot be constructed,
+	/// but existing ones can still be fetched.
+    virtual void ReleaseFace() = 0;
+
+protected:
+	Font::Style style;
+	Font::Weight weight;
+
+	bool release_stream;
+
+	typedef std::vector< FontFaceHandle* > HandleList;
+	typedef std::map< int, HandleList > HandleMap;
+	HandleMap handles;
+};
+
+}
 }
 
-Vector2f operator*(float lhs, const Vector2f& rhs)
-{
-	return Vector2f(lhs * rhs.x, lhs * rhs.y);
-}
-
-template <>
-Vector2< float > Vector2< float >::Normalise() const
-{
-	float magnitude = Magnitude();
-	if (Math::IsZero(magnitude))
-		return *this;
-
-	return *this / magnitude;
-}
-
-template <>
-Vector2< float > Vector2< float >::Rotate(float theta) const
-{
-	float cos_theta = Math::Cos(theta);
-	float sin_theta = Math::Sin(theta);
-
-	return Vector2< float >(cos_theta * x - sin_theta * y,
-							sin_theta * x + cos_theta * y);
-}
-
-}
-}
+#endif
